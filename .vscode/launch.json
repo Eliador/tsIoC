@@ -1,21 +1,23 @@
 {
     "version": "0.2.0",
     "configurations": [
-        {
-            "type": "pwa-node",
-            "request": "launch",
-            "name": "Lunch App",
-            "preLaunchTask": "tsc: build - tsconfig.json",
-            "skipFiles": [
-                "<node_internals>/**"
-              ],
-              "runtimeArgs": [
-                "-r",
-                "ts-node/register"
-              ],
-              "args": [
-                "${workspaceFolder}/test/main.ts"
-              ]
-        }
+
+      {
+        "args": [
+          "--require", "ts-node/register",
+          "--timeout", "999999",
+          "--colors", "--recursive",
+          "${workspaceFolder}/test/**/*.ts"
+        ],
+        "internalConsoleOptions": "openOnSessionStart",
+        "name": "Mocha Tests",
+        "preLaunchTask": "tsc: build - tsconfig.json",
+        "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+        "request": "launch",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "type": "pwa-node"
+      }
     ]
 }

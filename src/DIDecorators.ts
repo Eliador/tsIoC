@@ -33,7 +33,7 @@ export function ScopedDependency(properties?: {dependency?: string | Function, n
     };
 }
 
-export function NameOfType(typeName: string): Function {
+export function NameOfType(typeName: string | Function): Function {
     return (target: any, key : string, index : number) =>{
         target[methodArgumentTypeNameKey + index] = typeName;
     }

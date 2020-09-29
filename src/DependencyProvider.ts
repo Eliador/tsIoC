@@ -14,6 +14,15 @@ export class DependencyProvider {
         }
         
         let context = dependenciesContexts[0];
+        return this.resolveInternal(context);
+    }
+
+    public resolveMany(dependency: string | Function): Array<any> {
+        let dependenciesContexts = DependencyContainer.instance.getDependency(item => item.dependency === dependency);
+        return dependenciesContexts.map(context => this.resolveInternal(context));
+    }
+
+    private resolveInternal(context: DependencyContext): any {
         switch (context.type) {
             case DependencyType.Transient:
                 return this.buildDependencyInstance(context);
@@ -22,11 +31,6 @@ export class DependencyProvider {
             case DependencyType.Scoped:
                 return this.getScopedInstance(context);
         }
-    }
-
-    private resolveMany(dependency: string | Function): Array<any> {
-        let dependencies = DependencyContainer.instance.getDependency(item => item.dependency === dependency);
-        return dependencies.map(item => this.resolve(item.dependency));
     }
 
     private getSingletonInstance(context: DependencyContext): any {
@@ -42,12 +46,12 @@ export class DependencyProvider {
     }
 
     private getScopedInstance(context: DependencyContext) {
-        let dependencyInstance = this._scopedInstances.find((item: DependencyInstance) => item.context === context);
-        if (dependencyInstance) {
-            return dependencyInstance;
+        let dependency = this._scopedInstances.find((item: DependencyInstance) => item.context === context);
+        if (dependency) {
+            return dependency.instance;
         }
 
-        dependencyInstance = this.buildDependencyInstance(context);
+        let dependencyInstance = this.buildDependencyInstance(context);
         this._scopedInstances.push(new DependencyInstance(context, dependencyInstance));
 
         return dependencyInstance;

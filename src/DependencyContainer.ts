@@ -7,7 +7,7 @@ export class DependencyContainer {
     private static _instance: DependencyContainer = undefined;
 
     private _dependencies: Array<DependencyContext> = [];
-    private _singletonInstamces: Array<DependencyInstance> = [];
+    private _singletonInstances: Array<DependencyInstance> = [];
 
     public static get instance(): DependencyContainer {
         if (!this._instance)
@@ -47,12 +47,12 @@ export class DependencyContainer {
     }
 
     public tryGetSingletonInstance(context: DependencyContext): any {
-        var instance = this._singletonInstamces.find((item: DependencyInstance) => item.context === context);
+        var instance = this._singletonInstances.find((item: DependencyInstance) => item.context === context);
         return instance?.instance;
     }
 
     public addSingletonInstance(context: DependencyContext, instance: any): void {
-        this._singletonInstamces.push(new DependencyInstance(context, instance));
+        this._singletonInstances.push(new DependencyInstance(context, instance));
     }
 
     private addInternal(
@@ -60,6 +60,11 @@ export class DependencyContainer {
         implementation: Function,
         name: string,
         type: DependencyType): void {
+        if (name) {
+            if (this.getDependency(item => item.name === name).length > 0) {
+                throw `Dependency with the name '${name}' exists.`;
+            }
+        }
 
         let constructorProperties = this.getConstructorProperties(implementation);
         let dependencyContext = new DependencyContext(name, dependency, implementation, constructorProperties, type);
